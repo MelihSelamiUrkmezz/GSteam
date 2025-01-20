@@ -1,0 +1,68 @@
+using BasketService.Model;
+using BasketService.Repository;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+
+namespace BasketService.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class BasketController : ControllerBase
+{
+    private readonly IBasketRepository _basketRepository;
+    public BasketController(IBasketRepository basketRepository)
+    {
+        _basketRepository = basketRepository;
+    }
+
+    [HttpPost]
+    [Authorize]
+    public async Task<ActionResult> AddBasketItem(BasketModel model)
+    {
+        var response = await _basketRepository.AddBasket(model);
+        return Ok(response);
+    }
+
+    [HttpGet("BasketItems")]
+    [Authorize] 
+    public async Task<ActionResult> GetListItems()
+    {
+        var response = await _basketRepository.GetBasketItems();
+        return Ok(response);
+    }
+
+    [HttpGet("BasketItem/{index}")]
+    [Authorize]
+
+    public async Task<ActionResult> GetBasketItem([FromRoute]long index)
+    {
+        var response = await _basketRepository.GetBasketItem(index);
+        return Ok(response);
+    }
+
+    [HttpDelete("{index}")]
+    [Authorize]
+
+    public async Task<ActionResult> RemoveBasketItem([FromRoute]long index)
+    {
+        var response = await _basketRepository.RemoveBasketItem(index);
+        return Ok(response);
+    }
+
+    [HttpPost("Checkout")]
+    [Authorize]
+    public async Task<ActionResult> Checkout()
+    {
+        var response = await _basketRepository.Checkout();
+        return Ok(response);
+    }
+
+    [HttpPut]
+    [Authorize]
+    public async Task<ActionResult> CouponCodeImplement(long index,string couponCode)
+    {
+        var response = await _basketRepository.ImplementCoupon(index,couponCode);
+        return Ok(response);
+    }
+
+}
